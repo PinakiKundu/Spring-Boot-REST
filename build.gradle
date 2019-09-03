@@ -15,6 +15,9 @@ repositories {
 
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web:2.0.2.RELEASE'
+    compile 'org.springframework.boot:spring-boot-starter-actuator:2.0.9.RELEASE'
+    compile group: 'io.zipkin.java', name: 'zipkin-server', version: '2.12.9'
+    compile group: 'io.zipkin.java', name: 'zipkin-autoconfigure-ui', version: '2.12.9'
     testCompile 'org.springframework.boot:spring-boot-starter-test:2.0.2.RELEASE'
     compileOnly("org.projectlombok:lombok:1.18.2")
     annotationProcessor("org.projectlombok:lombok:1.18.2")
