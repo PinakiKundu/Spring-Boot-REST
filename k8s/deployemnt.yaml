@@ -10,7 +10,7 @@ metadata:
   name: my-app
   namespace: default
   resourceVersion: "5873"
-  selfLink: /apis/apps/v1/namespaces/default/deployments/my-app
+  selfLink: /apis/apps/v1/namespaces/default/deployments/my-app 
   #uid: 2f8d1a2d-d08a-11e9-ac89-42010a8001ea
 spec:
   progressDeadlineSeconds: 600
