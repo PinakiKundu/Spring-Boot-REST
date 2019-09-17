@@ -24,7 +24,7 @@ dependencies {
 }
 
 group = 'com.pinakis.spring'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0'
 description = 'Spring-Boot-REST'
 sourceCompatibility = '1.8'
 
