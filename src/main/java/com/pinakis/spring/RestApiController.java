@@ -18,7 +18,7 @@ public class RestApiController {
 		return "OK";
 	}
 	
-	@RequestMapping("/content/v1/stories/{assetId}")
+	@RequestMapping("/api/v1/status/{assetId}")
 	public AssetStatus getState(@PathVariable Long assetId) {
 		assetStatus.setId(assetId);
 		assetStatus.setLastPublished(Instant.now());
