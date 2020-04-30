@@ -15,5 +15,5 @@ gradle clean bootRun
 
 check the output on your your browser on following URL
 ```
-http://localhot:8080/content/v1/stories/1
+http://localhot:8080/api/v1/status/1
 ```
