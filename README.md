@@ -1,9 +1,11 @@
+[![Java CI with Maven](https://github.com/PinakiKundu/Spring-Boot-REST/actions/workflows/maven.yml/badge.svg)](https://github.com/PinakiKundu/Spring-Boot-REST/actions/workflows/maven.yml)
+
 # Spring-Boot-REST
 
 This is my sample project to demonstrate Spring-Boot functionality with Rest functionality.
 
 ### Pre-requisities
-You must have **Java version 1.8** and **Gradle version 4+** installed in your computer
+You must have **Java version 21** and **Maven/Gradle latest version** installed in your computer
 
 ### How to run the code
 
