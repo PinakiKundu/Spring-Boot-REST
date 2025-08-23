@@ -1,116 +1,65 @@
 package com.pinakis.spring;
 
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
  * The State Enum.
  */
 public enum State {
-    /**
-     * DRAFT.
-     */
-    DRAFT("Draft"){
+    DRAFT("Draft") {
         @Override
         public List<State> getNextStates(boolean isPublished) {
-            List<State> nextStates = new ArrayList<>();
-            nextStates.add(State.PUBLISHED);
-            nextStates.add(State.ARCHIVED);
-            nextStates.add(State.IN_REVIEW);
-            return nextStates;
+            return List.of(PUBLISHED, ARCHIVED, IN_REVIEW);
         }
     },
-    /**
-     * IN_REVIEW.
-     */
     IN_REVIEW("In Review") {
         @Override
         public List<State> getNextStates(boolean isPublished) {
-            List<State> nextStates = new ArrayList<>();
-            nextStates.add(State.PUBLISHED);
-            nextStates.add(State.ARCHIVED);
-            if (isPublished) {
-                nextStates.add(State.UPDATED);
-            } else {
-                nextStates.add(State.DRAFT);
-            }
-            return nextStates;
+            return isPublished
+                    ? List.of(PUBLISHED, ARCHIVED, UPDATED)
+                    : List.of(PUBLISHED, ARCHIVED, DRAFT);
         }
     },
-    /**
-     * PUBLISHED.
-     */
     PUBLISHED("Published") {
         @Override
         public List<State> getNextStates(boolean isPublished) {
-            List<State> nextStates = new ArrayList<>();
-            nextStates.add(State.UPDATED);
-            nextStates.add(State.UNPUBLISHED);
-            return nextStates;
+            return List.of(UPDATED, UNPUBLISHED);
         }
     },
-    /**
-     * ARCHIVED.
-     */
     ARCHIVED("Archived") {
         @Override
         public List<State> getNextStates(boolean isPublished) {
-            List<State> nextStates = new ArrayList<>();
-            if (isPublished) {
-                nextStates.add(State.IN_REVIEW);
-            } else {
-                nextStates.add(State.DRAFT);
-            }
-            return nextStates;
+            return isPublished ? List.of(IN_REVIEW) : List.of(DRAFT);
         }
     },
-    /**
-     * UPDATED.
-     */
     UPDATED("Updated") {
         @Override
         public List<State> getNextStates(boolean isPublished) {
-            List<State> nextStates = new ArrayList<>();
-            nextStates.add(State.PUBLISHED);
-            nextStates.add(State.IN_REVIEW);
-            return nextStates;
+            return List.of(PUBLISHED, IN_REVIEW);
         }
     },
-    /**
-     * UNPUBLISHED.
-     */
     UNPUBLISHED("Unpublished") {
         @Override
         public List<State> getNextStates(boolean isPublished) {
-            List<State> nextStates = new ArrayList<>();
-            nextStates.add(State.ARCHIVED);
-            nextStates.add(State.IN_REVIEW);
-            nextStates.add(State.PUBLISHED);
-            return nextStates;
+            return List.of(ARCHIVED, IN_REVIEW, PUBLISHED);
+        }
+    },
+    UNKNOWN("Unknown") {
+        @Override
+        public List<State> getNextStates(boolean isPublished) {
+            return List.of(DRAFT);
         }
     };
 
     private final String stateLabel;
 
-    /**
-     * This initialize State with StateLabel.
-     *
-     * @param stateLabel stateLabel.
-     */
     State(String stateLabel) {
         this.stateLabel = stateLabel;
     }
 
     public String getStateLabel() {
-        return this.stateLabel;
+        return stateLabel;
     }
 
-    /**
-     *  This method return the nextState.
-     * @param isPublished Article is already published or not.
-     * @return  List of next State.
-     */
     public abstract List<State> getNextStates(boolean isPublished);
-
 }
