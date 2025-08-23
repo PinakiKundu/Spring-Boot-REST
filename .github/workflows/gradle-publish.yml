@@ -1,11 +1,10 @@
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-# This workflow will build a package using Gradle and then publish it to GitHub packages when a release is created
+# separate terms of service, privacy policy, and support documentation.
+# This workflow will build a package using Gradle and then publish it to GitHub Packages when a release is created
 # For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-gradle
 
-name: Gradle Package
+name: Gradle Package (Java 21)
 
 on:
   release:
@@ -13,7 +12,6 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -21,12 +19,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Set up JDK 11
+
+    - name: Set up JDK 21
       uses: actions/setup-java@v3
       with:
-        java-version: '11'
+        java-version: '21'
         distribution: 'temurin'
-        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
+        server-id: github # Value of the publishing repo ID in build.gradle
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
     - name: Build with Gradle
@@ -43,6 +42,6 @@ jobs:
       env:
         USERNAME: ${{ github.actor }}
         TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
+
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag spring-boot-resr:$(date +%s)
+      run: docker build . --file Dockerfile --tag spring-boot-rest:$(date +%s)
