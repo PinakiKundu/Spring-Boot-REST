@@ -18,6 +18,7 @@ jobs:
       mavenPOMFile: $(BuildParameters.mavenPOMFile)
   - script: |
       echo "Fetching logs for Build ID: $(Build.BuildId)"
+      echo "$(System.CollectionUri)/$(System.TeamProject)/_apis/build/builds/$(Build.BuildId)/logs?api-version=7.1-preview.2"
       response=$(curl -s -u :$(System.AccessToken) \
         "$(System.CollectionUri)/$(System.TeamProject)/_apis/build/builds/$(Build.BuildId)/logs?api-version=7.1-preview.2")
       
