@@ -16,15 +16,78 @@ jobs:
     displayName: Maven pom.xml
     inputs:
       mavenPOMFile: $(BuildParameters.mavenPOMFile)
-  - task: CopyFiles@2
-    displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
-    condition: succeededOrFailed()
-    inputs:
-      SourceFolder: $(system.defaultworkingdirectory)
-      Contents: '**/*.jar'
-      TargetFolder: $(build.artifactstagingdirectory)
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact: drop'
-    condition: succeededOrFailed()
-    inputs:
-      PathtoPublish: $(build.artifactstagingdirectory)
+  - script: |
+      echo "Fetching logs for Build ID: $(Build.BuildId)"
+      response=$(curl -s -u :$(System.AccessToken) \
+        "https://dev.azure.com/$(System.TeamProject)/_apis/build/builds/$(Build.BuildId)/logs?api-version=7.1-preview.2")
+
+      # Extract last log URL using jq
+      last_url=$(echo "$response" | jq -r '.value[-1].url')
+
+      echo "Last Log URL: $last_url"
+
+      # Save to variable for later steps
+      echo "##vso[task.setvariable variable=LastLogUrl]$last_url"
+    displayName: "Fetch Last Log URL"
+    env:
+      System.AccessToken: $(System.AccessToken)
+    condition: always()
+
+  - script: |
+      error_log=$(curl -s -u :$(System.AccessToken) $last_url) \
+        | grep -i -A 20 -B 20 "\[ERROR\]" build.log > error-snippet.log || true
+      echo "==== Extracted error log ===="
+      cat error-snippet.log || echo "No errors found"
+    displayName: "Extract Error Snippet"
+    condition: always()
+
+#  - script: |
+#      python3 -m venv venv
+#      source venv/bin/activate
+#      pip install openai
+#    displayName: "Install OpenAI client"
+#
+#    # Step 6: Send error log to ChatGPT and print solution
+#  - script: |
+#      source venv/bin/activate
+#      python - << 'EOF'
+#      from openai import OpenAI
+#      import os
+#
+#      client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+#
+#      # Read the error snippet
+#      try:
+#          with open("error-snippet.log", "r") as f:
+#              log_content = f.read()
+#      except FileNotFoundError:
+#          log_content = "No errors captured in log."
+#
+#      response = client.chat.completions.create(
+#          model="gpt-5",
+#          messages=[
+#              {"role": "system", "content": "You are a DevOps assistant that analyzes Maven/Azure DevOps build logs and suggests fixes."},
+#              {"role": "user", "content": f"Here is the error log:\n\n{log_content}\n\nPlease summarize the root cause and suggest a fix."}
+#          ]
+#      )
+#
+#      print("\n==== AI Analysis ====\n")
+#      print(response.choices[0].message.content)
+#      print("\n=====================\n")
+#      EOF
+#    displayName: "Send Error Log to ChatGPT"
+#    env:
+#      OPENAI_API_KEY: $(OPENAI_API_KEY)
+#
+#  - task: CopyFiles@2
+#    displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+#    condition: succeededOrFailed()
+#    inputs:
+#      SourceFolder: $(system.defaultworkingdirectory)
+#      Contents: '**/*.jar'
+#      TargetFolder: $(build.artifactstagingdirectory)
+#  - task: PublishBuildArtifacts@1
+#    displayName: 'Publish Artifact: drop'
+#    condition: succeededOrFailed()
+#    inputs:
+#      PathtoPublish: $(build.artifactstagingdirectory)
