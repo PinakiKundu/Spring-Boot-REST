@@ -1,0 +1,30 @@
+variables:
+- name: BuildParameters.mavenPOMFile
+  value: pom.xml
+name: $(date:yyyyMMdd)$(rev:.r)
+
+jobs:
+- job: buildSpringBootRest
+  displayName: Build SpringBootRest
+  pool:
+    vmImage: ubuntu-latest
+  steps:
+  - checkout: self
+    clean: true
+    fetchTags: false
+  - task: Maven@3
+    displayName: Maven pom.xml
+    inputs:
+      mavenPOMFile: $(BuildParameters.mavenPOMFile)
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+    condition: succeededOrFailed()
+    inputs:
+      SourceFolder: $(system.defaultworkingdirectory)
+      Contents: '**/*.jar'
+      TargetFolder: $(build.artifactstagingdirectory)
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish Artifact: drop'
+    condition: succeededOrFailed()
+    inputs:
+      PathtoPublish: $(build.artifactstagingdirectory)
