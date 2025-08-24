@@ -19,9 +19,9 @@ jobs:
   - script: |
       echo "Fetching logs for Build ID: $(Build.BuildId)"
       response=$(curl -s -u :$(System.AccessToken) \
-        "https://dev.azure.com/$(System.TeamProject)/_apis/build/builds/$(Build.BuildId)/logs?api-version=7.1-preview.2")
+        "$(System.CollectionUri)/$(System.TeamProject)/_apis/build/builds/$(Build.BuildId)/logs?api-version=7.1-preview.2")
       
-      echo "$response"
+      echo $response
       # Extract last log URL using jq
       last_url=$(echo "$response" | jq -r '.value[-1].url')
 
